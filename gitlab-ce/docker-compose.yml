@@ -1,3 +1,11 @@
+# NSO-DevOps-in-a-tin-can
+# Author: @ponchotitlan
+# 
+# Docker-compose file for deploying gitlab-ce
+#
+# IMPORTANT!
+# This version of the docker-compose file uses the gitlab-ce build for ARM64 because this is my current development environment (Mac M1). Will update with the x64_86 docker image soon before the first project release
+
 version: '3.6'
 services:
   web:
