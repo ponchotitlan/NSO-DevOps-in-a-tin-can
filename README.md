@@ -83,7 +83,7 @@ Now it's time to link Gitlab-CE and Jenkins for triggering our CICD pipelines wh
 
 ![Jenkins unlocking screen](images/jenkins_01.png)
 
-2. Install the Gitlab plugin. This will take some time ...
+2. Select _Select plugins to install_ and search for the **Gitlab plugin**. The download and installation of this plugin along with its dependencies will take some time ...
 
 ![Jenkins plugins screen](images/jenkins_02.png)
 ![Jenkins Gitlab plugin install screen](images/jenkins_03.png)
