@@ -76,7 +76,14 @@ The platform web interfaces will be available in the following locations:
 - Jenkins: localhost:4040
 
 ## Gitlab-CE and Jenkins setup
+The soup is looking good ...
 Now it's time to link Gitlab-CE and Jenkins for triggering our CICD pipelines whenever a new code version is pushed:
 
-1. Login to the Jenkins portal located at localhost:4040 and unlock it using the password provided after the setup process.
-2. Install the Gitlab plugin
+1. Login to the Jenkins portal located at localhost:4040 and unlock it using the password provided after the setup process
+
+![Jenkins unlocking screen](images/jenkins_01.png)
+
+2. Install the Gitlab plugin. This will take some time ...
+
+![Jenkins plugins screen](images/jenkins_02.png)
+![Jenkins Gitlab plugin install screen](images/jenkins_03.png)
