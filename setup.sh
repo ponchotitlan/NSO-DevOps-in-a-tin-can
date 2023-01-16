@@ -26,38 +26,59 @@ cd gitlab-ce
 docker-compose up -d 2> gitlab_setup.log
 
 echo "Now, let's wait for Gitlab-CE web portal to be available ... 🦊\\n"
-until $(curl --output /dev/null --silent --head --fail localhost:8080); do
-    printf '⏳'
-    sleep 5
+while true
+do
+    if curl -I "localhost:8080" 2>&1 | grep -w "302" ; then
+        break
+    else
+        printf '⏳'
+        sleep 5
+    fi
 done
 
-gitlab_pwd=`docker exec -it gitlab-ce grep 'Password:' /etc/gitlab/initial_root_password`
+#If login root@cisco123 doesn't work, delete the HOME/gitlab folder!
 echo "Success! You can login now to Gitlab-CE with the following information\\n
     🦊 Address: localhost:8080
     👤 User: root
-    🔑 ${gitlab_pwd}\\n
+    🔑 Password: cisco123
+
 You can change these credentials later on via the platform.
-These credentials are available in the log file /gitlab-ce/gitlab_setup.log in this repository"
+These credentials are available in the log file /gitlab-ce/gitlab_setup.log in this repository\\n"
 
 printf """
 Success! You can login now to Gitlab-CE with the following information\\n
-🦊 localhost:8080\\n
+🦊 Address: localhost:8080\\n
 👤 User: root\\n
-🔑 Address: ${gitlab_pwd}\\n\\n
+🔑 Password: cisco123
 """ >> gitlab_setup.log
 
 echo "Setting up the Jenkins container. This is our orchestrator (Setup will take some time as well) ... 💂\\n"
 mkdir -p ${HOME}/jenkins
 export JENKINS_HOME=/${HOME}/jenkins
-cd jenkins
+cd ../jenkins
 docker-compose up -d 2> jenkins_setup.log
 
 echo "Likewise, let's wait for Jenkins web portal to be available ... 💂\\n"
-jenkins_ok_check=False
-until jenkins_ok_check=='success'; do
-     jenkins_ok_check=$(curl --output /dev/null --silent --head --fail localhost:4040 && echo "success")
-     printf '⏳'
-     sleep 5
+while true
+do
+    if curl -I "localhost:4040" 2>&1 | grep -w "403" ; then
+        break
+    else
+        printf '⏳'
+        sleep 5
+    fi
 done
 
 jenkins_pwd=`docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword`
+echo "Success! You can login now to Jenkins with the following information\\n
+    💂 Address: localhost:4040
+    🔑 Unlocking password: ${jenkins_pwd}
+
+Please perform the initial setup as shown in the README and the Wiki.
+These credentials are available in the log file /jenkins/gitlab_setup.log in this repository\\n"
+
+printf """
+Success! You can login now to Jenkins with the following information\\n
+💂 Address: localhost:4040
+🔑 Unlocking password: ${jenkins_pwd}\\n
+""" >> jenkins_setup.log
