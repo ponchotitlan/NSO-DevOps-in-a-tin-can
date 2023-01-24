@@ -1,0 +1,11 @@
+<devices xmlns="http://tail-f.com/ns/ncs">
+    <authgroups>
+        <group>
+            <name>default</name>
+            <default-map>
+            <remote-name>admin</remote-name>
+            <remote-password>admin</remote-password>
+            </default-map>
+        </group>
+    </authgroups>
+</devices>

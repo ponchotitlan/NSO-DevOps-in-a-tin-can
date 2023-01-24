@@ -17,18 +17,14 @@ pipeline {
          * Jenkins will pull the NSO Docker image indicated in the yaml configuration file
          * and spin up a container ready to be used for testing
          */
-          steps {            
+         steps{
+            updateGitlabCommitStatus name: 'NSO setup', state: 'pending'
             script{
-              try{
-                def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
-                ContainerHandler.spinNSOContainer("cisco-nso-base:6.0-root","nso6.0")
-              }
-              catch(error){
-                updateGitlabCommitStatus name: 'NSO setup', state: 'failed'
-                error "Error: ${error}"
-              }
+              def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
+              ContainerHandler.spinNSOContainer("cisco-nso-dev:6.0-root","nso6.0")
             }
-          }
+            updateGitlabCommitStatus name: 'NSO setup', state: 'success'
+         }          
        }
 
        stage('NEDs setup') {
@@ -37,25 +33,30 @@ pipeline {
          * file into the previously created NSO container and issue a packages reload.
          * The NEDs must me present in the ${HOME}/nso_cicd_tincan/neds location.
          */
-           steps {
-            script{
-              String[] NEDS = ["cisco-ios-cli-6.88"]
-              def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
-              ContainerHandler.loadNEDs(NEDS,"nso6.0")
-            }
-           }
+        steps{
+          updateGitlabCommitStatus name: 'NEDs setup', state: 'pending'
+          script{
+            String[] NEDS = ["cisco-ios-cli-6.88"]
+            def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
+            ContainerHandler.loadNEDs(NEDS,"nso6.0")
+          }
+          updateGitlabCommitStatus name: 'NEDs setup', state: 'success'
+        }
        }       
       
        stage('Workspace cleanup') {
         /*
          * Jenkins will destroy the created NSO container used throughout the process
          */
-           steps {
-            // script{
-            //   def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
-            //   ContainerHandler.destroyNSOContainer("nso6.0")
-            // }
-           }
+         steps{
+          updateGitlabCommitStatus name: 'Workspace cleanup', state: 'pending'
+          echo "TODO: Cleanup"
+          // script{
+          //   def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
+          //   ContainerHandler.destroyNSOContainer("nso6.0")
+          // }
+          updateGitlabCommitStatus name: 'Workspace cleanup', state: 'success'
+         }
        }
     }
  }

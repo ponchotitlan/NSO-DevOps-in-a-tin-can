@@ -20,6 +20,18 @@
         script: "docker run -itd --platform=linux/amd64 --name ${containerName} ${imageName}",
         returnStdout: true
     )
+    sh(
+        script: "docker exec -i ${containerName} bash -l -c \"mkdir log\"",
+        returnStdout: true
+    )
+    sh(
+        script: "docker exec -i ${containerName} bash -l -c \"cp /etc/ncs/ncs.conf.in /etc/ncs/ncs.conf \"",
+        returnStdout: true
+    )
+    sh(
+        script: "docker exec -i ${containerName} bash -l -c \"/etc/init.d/ncs start\"",
+        returnStdout: true
+    )
  }
 
  def loadNEDs(String[] neds, String containerName){
@@ -34,11 +46,6 @@
             returnStdout: true
         )
     }
-    echo "Executing packages reload in the NSO container"
-    sh(
-        script: "docker exec -i ${containerName} bash -l -c \"echo 'packages reload' | ncs_cli -Cu admin\"",
-        returnStdout: true
-    )
  }
 
   def destroyNSOContainer(String containerName){
