@@ -17,10 +17,7 @@ pipeline {
          * Jenkins will pull the NSO Docker image indicated in the yaml configuration file
          * and spin up a container ready to be used for testing
          */
-          steps {
-            echo 'Notify GitLab about NSO setup'
-            updateGitlabCommitStatus name: 'NSO setup', state: 'pending'
-             
+          steps {            
             script{
               try{
                 def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
@@ -31,8 +28,6 @@ pipeline {
                 error "Error: ${error}"
               }
             }
-
-            updateGitlabCommitStatus name: 'NSO setup', state: 'success'
           }
        }
 
@@ -43,16 +38,11 @@ pipeline {
          * The NEDs must me present in the ${HOME}/nso_cicd_tincan/neds location.
          */
            steps {
-            echo 'Notify GitLab about NEDs setup'
-            updateGitlabCommitStatus name: 'NEDs setup', state: 'pending'
-            
             script{
+              String[] NEDS = ["cisco-ios-cli-6.88"]
               def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
-              String[] NEDS = ["ncs-6.0-cisco-ios-6.88-freetrial.signed.bin","ncs-6.0-cisco-iosxr-7.43-freetrial.signed.bin"]
-              ContainerHandler.loadNEDs(NEDS)
+              ContainerHandler.loadNEDs(NEDS,"nso6.0")
             }
-            
-            updateGitlabCommitStatus name: 'NEDs setup', state: 'success'
            }
        }       
       
@@ -61,15 +51,10 @@ pipeline {
          * Jenkins will destroy the created NSO container used throughout the process
          */
            steps {
-            echo 'Notify GitLab about Workspace cleanup'
-            updateGitlabCommitStatus name: 'Workspace cleanup', state: 'pending'
-
-            script{
-              def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
-              ContainerHandler.destroyNSOContainer("nso6.0")
-            }
-
-            updateGitlabCommitStatus name: 'Workspace cleanup', state: 'success'
+            // script{
+            //   def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
+            //   ContainerHandler.destroyNSOContainer("nso6.0")
+            // }
            }
        }
     }

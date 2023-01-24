@@ -15,4 +15,5 @@ services:
     container_name: jenkins
     volumes:
       - $JENKINS_HOME:/var/jenkins_home
+      - $INVENTORY:/my_neds
       - /var/run/docker.sock:/var/run/docker.sock
