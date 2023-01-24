@@ -19,6 +19,9 @@
 
 echo "\\nWarming up the contents of this tin can! 🥫🥫🥫\\n"
 
+echo "Creating all the local directories for our environment ... 📂\\n"
+mkdir -p ${HOME}/nso_cicd_tincan/neds
+
 echo "Setting up the Gitlab-CE container. This is our Control Versioning System (Setup will take some time) ... 🦊\\n"
 mkdir -p ${HOME}/gitlab
 export GITLAB_HOME=/${HOME}/gitlab

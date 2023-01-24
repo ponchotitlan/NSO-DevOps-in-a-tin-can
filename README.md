@@ -77,13 +77,7 @@ The platform web interfaces will be available in the following locations:
 
 ## Gitlab-CE and Jenkins setup
 The soup is looking good ...
-Now it's time to link Gitlab-CE and Jenkins for triggering our CICD pipelines whenever a new code version is pushed:
+TODO: Pack Docker images for automatic deployment, no configs
+Maybe deploy a nginx reverse proxy for avoiding usage of localhost ...
 
-1. Login to the Jenkins portal located at localhost:4040 and unlock it using the password provided after the setup process
 
-![Jenkins unlocking screen](images/jenkins_01.png)
-
-2. Select _Select plugins to install_ and search for the **Gitlab plugin**. The download and installation of this plugin along with its dependencies will take some time ...
-
-![Jenkins plugins screen](images/jenkins_02.png)
-![Jenkins Gitlab plugin install screen](images/jenkins_03.png)

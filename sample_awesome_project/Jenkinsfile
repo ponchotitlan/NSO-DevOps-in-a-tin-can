@@ -1,0 +1,76 @@
+#!/usr/bin/env groovy
+/**
+ * NSO-DevOps-in-a-tin-can
+ * Author: @ponchotitlan
+ *
+ * Declarative script of the Jenkins pipeline stages for NSO Use Case testing.
+ * The setup of Jenkins and Gitlab-CE is required as per described in the following repository:
+ * 
+ * https://github.com/ponchotitlan/NSO-DevOps-in-a-tin-can
+ */
+
+pipeline {
+    agent any
+    stages {
+       stage('NSO setup') {
+        /*
+         * Jenkins will pull the NSO Docker image indicated in the yaml configuration file
+         * and spin up a container ready to be used for testing
+         */
+          steps {
+            echo 'Notify GitLab about NSO setup'
+            updateGitlabCommitStatus name: 'NSO setup', state: 'pending'
+             
+            script{
+              try{
+                def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
+                ContainerHandler.spinNSOContainer("cisco-nso-base:6.0-root","nso6.0")
+              }
+              catch(error){
+                updateGitlabCommitStatus name: 'NSO setup', state: 'failed'
+                error "Error: ${error}"
+              }
+            }
+
+            updateGitlabCommitStatus name: 'NSO setup', state: 'success'
+          }
+       }
+
+       stage('NEDs setup') {
+        /*
+         * Jenkins will load the required NED files indicated in the yaml configuration
+         * file into the previously created NSO container and issue a packages reload.
+         * The NEDs must me present in the ${HOME}/nso_cicd_tincan/neds location.
+         */
+           steps {
+            echo 'Notify GitLab about NEDs setup'
+            updateGitlabCommitStatus name: 'NEDs setup', state: 'pending'
+            
+            script{
+              def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
+              String[] NEDS = ["ncs-6.0-cisco-ios-6.88-freetrial.signed.bin","ncs-6.0-cisco-iosxr-7.43-freetrial.signed.bin"]
+              ContainerHandler.loadNEDs(NEDS)
+            }
+            
+            updateGitlabCommitStatus name: 'NEDs setup', state: 'success'
+           }
+       }       
+      
+       stage('Workspace cleanup') {
+        /*
+         * Jenkins will destroy the created NSO container used throughout the process
+         */
+           steps {
+            echo 'Notify GitLab about Workspace cleanup'
+            updateGitlabCommitStatus name: 'Workspace cleanup', state: 'pending'
+
+            script{
+              def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
+              ContainerHandler.destroyNSOContainer("nso6.0")
+            }
+
+            updateGitlabCommitStatus name: 'Workspace cleanup', state: 'success'
+           }
+       }
+    }
+ }
