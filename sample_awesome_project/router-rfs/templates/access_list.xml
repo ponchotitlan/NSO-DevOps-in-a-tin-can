@@ -1,0 +1,15 @@
+<devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+    <name>{$DEVICE}</name>
+    <config>
+        <access-list xmlns="urn:ios">
+            <access-list>
+                <id>{$ID}</id>
+                <rule>
+                    <rule>{$ACTION} host {$DESTINATION}</rule>
+                </rule>
+            </access-list>
+        </access-list>
+    </config>
+    </device>
+</devices>
