@@ -17,17 +17,10 @@
     * TODO: remove AMD64 architecture from building
     */
     sh(
-        script: "docker run -itd --platform=linux/amd64 --name ${containerName} ${imageName}",
+        script: "docker run -itd --platform=linux/amd64 --name ${containerName} -p 8089:8080 ${imageName}",
         returnStdout: true
     )
-    sh(
-        script: "docker exec -i ${containerName} bash -l -c \"mkdir log\"",
-        returnStdout: true
-    )
-    sh(
-        script: "docker exec -i ${containerName} bash -l -c \"cp /etc/ncs/ncs.conf.in /etc/ncs/ncs.conf \"",
-        returnStdout: true
-    )
+    //TODO: Copy the repository's nso_setup.sh file to the container and execute it
     sh(
         script: "docker exec -i ${containerName} bash -l -c \"/etc/init.d/ncs start\"",
         returnStdout: true
