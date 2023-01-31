@@ -19,7 +19,7 @@ def spinNSOContainer(String imageName, String containerName){
 
     // Spin a brand-new NSO container
     sh(
-        script: "docker run -itd --platform=linux/amd64 --name ${containerName} ${imageName}",
+        script: "docker run -itd --platform=linux/amd64 -p 8089:8080 --name ${containerName} ${imageName}",
         returnStdout: true
     )
     // Copy the nso setup script from the repository into the container
@@ -59,6 +59,8 @@ def loadServicePackages(String[] packages, String containerName){
     * checked repository, copies them into the active NSO container,
     * compiles them, and issues a packages reload in NSO
     */
+
+    // Copy the specified packages into the NSO container
     packages.each{ pack -> 
         sh(
             script: "docker cp /var/jenkins_home/workspace/nso-cicd-pipeline/my_packages/${pack}/ ${containerName}:/nso/run/packages/",
@@ -78,6 +80,93 @@ def loadServicePackages(String[] packages, String containerName){
         returnStdout: true
     )
     print(refresh_result)
+}
+
+def spinTestDevices(Map devices, String containerName){
+    /**
+    * This function spins the specified netsim devices in the NSO container
+    * and onboards them on NSO
+    */
+
+    // Create netsim devices
+    devices.eachWithIndex{ device, index  ->
+        if(index == 0){
+            sh(
+                script: "docker exec -i ${containerName} bash -l -c \"ncs-netsim create-network /nso/run/packages/${device.key}/ 1 ${device.value}\"",
+                returnStdout: true
+            )
+        }
+        else{
+            sh(
+                script: "docker exec -i ${containerName} bash -l -c \"ncs-netsim add-to-network /nso/run/packages/${device.key}/ 1 ${device.value}\"",
+                returnStdout: true
+            )
+        }
+    }
+    // Start the netsim devices
+    print(sh(
+        script: "docker exec -i ${containerName} bash -l -c \"ncs-netsim start\"",
+        returnStdout: true
+    ))
+    // Log the netsim list
+    print(sh(
+        script: "docker exec -i ${containerName} bash -l -c \"ncs-netsim list\"",
+        returnStdout: true
+    ))    
+}
+
+def onboardTestDevices(String containerName){
+    /**
+    * This function generates the configuration xml file of the created
+    * netsim devices and loads it into NSO along with the netsim_authentication.xml
+    * file from this repository
+    */
+
+    // Copy the netsim_authentication.xml file from the repository into the NSO container
+    sh(
+        script: "docker cp /var/jenkins_home/workspace/nso-cicd-pipeline/pipeline_utils/netsim_authgroup.xml ${containerName}:/",
+        returnStdout: true
+    )
+    // Load the netsim_authentication.xml file into NSO
+    sh(
+        script: "docker exec -i ${containerName} bash -l -c \"ncs_load -l -m netsim_authgroup.xml\"",
+        returnStdout: true
+    )
+    // Generate device configuration devices.xml file
+    sh(
+        script: "docker exec -i ${containerName} bash -l -c \"ncs-netsim ncs-xml-init > devices.xml\"",
+        returnStdout: true
+    )
+    // Load the devices.xml file into NSO
+    sh(
+        script: "docker exec -i ${containerName} bash -l -c \"ncs_load -l -m devices.xml\"",
+        returnStdout: true
+    )
+    // Issue a devices sync-from in NSO
+    sync_result = sh(
+        script: "docker exec -i ${containerName} bash -l -c \"echo 'devices device * sync-from' | ncs_cli -Cu admin\"",
+        returnStdout: true
+    )
+    print(sync_result)
+}
+
+def runTestBed(){
+    /**
+    * This function executes the unit tests within
+    * the testsuite.py file from the repository against
+    * the RESTCONF interface of the NSO container
+    */
+
+    // Installation of any required python libraries as per the requirements.txt file
+    sh(
+        script: "cd /var/jenkins_home/workspace/nso-cicd-pipeline/ && pip install -r requirements.txt",
+        returnStdout: true
+    )
+    // Execution of the test suite
+    print(sh(
+        script: "cd /var/jenkins_home/workspace/nso-cicd-pipeline/ && python3 testsuite.py",
+        returnStdout: true
+    ))
 }
 
 def destroyNSOContainer(String containerName){

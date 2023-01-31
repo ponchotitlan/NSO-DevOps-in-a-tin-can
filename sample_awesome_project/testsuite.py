@@ -88,7 +88,7 @@ destination 10.2.3.8
 
     # First, we perform a service provisioning in our NSO container against a netsim device
     nso_restconf_patch_request(
-      containerAddress='127.0.0.1:8089',
+      containerAddress='192.168.1.80:8089',
       nsoservice='router-rfs:access-list-router-rfs',
       payload=REQUEST_PAYLOAD)
     

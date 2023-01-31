@@ -42,21 +42,74 @@ pipeline {
           }
           updateGitlabCommitStatus name: 'NEDs setup', state: 'success'
         }
-       }       
-      
-       stage('Workspace cleanup') {
-        /*
-         * Jenkins will destroy the created NSO container used throughout the process
-         */
-         steps{
-          updateGitlabCommitStatus name: 'Workspace cleanup', state: 'pending'
-          echo "TODO: Cleanup"
-          // script{
-          //   def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
-          //   ContainerHandler.destroyNSOContainer("nso6.0")
-          // }
-          updateGitlabCommitStatus name: 'Workspace cleanup', state: 'success'
-         }
        }
+
+      stage('Packages setup') {
+        /*
+          * Jenkins will load the NSO service package to be tested as indicated in the
+          * yaml testbed file into the previously created NSO container. The packages
+          * will be compiled and added to NSO. A packages reload will be issued.
+          * The service package must be present in this repository under
+          * the root location.
+          */
+        steps{
+          updateGitlabCommitStatus name: 'Packages setup', state: 'pending'
+          script{
+            String[] packages = ["router-rfs"]
+            def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
+            ContainerHandler.loadServicePackages(packages,"nso6.0")
+          }
+          updateGitlabCommitStatus name: 'Packages setup', state: 'success'
+        }
+      }      
+
+      stage('Testbed setup') {
+      /*
+        * Jenkins will create the required NETSIM devices and
+        * onboard them in the NSO container. Jenkins will also
+        * copy the python testbed from the repository to the
+        * NSO container
+        */
+        steps{
+          updateGitlabCommitStatus name: 'Testbed setup', state: 'pending'
+          script{
+            Map devices = ["cisco-ios-cli-6.88":"test-ios-"]
+            def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
+            ContainerHandler.spinTestDevices(devices,"nso6.0")
+            ContainerHandler.onboardTestDevices("nso6.0")
+          }
+          updateGitlabCommitStatus name: 'Testbed setup', state: 'success'
+        }
+      } 
+
+      stage('Test execution') {
+      /*
+        * Jenkins will execute the tests specified in the yaml testbed against the
+        * previously created NSO container. The test files must be present in the
+        * /tests folder of this repository
+        */
+        steps{
+          updateGitlabCommitStatus name: 'Test execution', state: 'pending'
+          script{
+            def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
+            ContainerHandler.runTestBed()
+          }
+          updateGitlabCommitStatus name: 'Test execution', state: 'success'
+        }
+      } 
+      
+      // stage('Workspace cleanup') {
+      // /*
+      //   * Jenkins will destroy the created NSO container used throughout the process
+      //   */
+      //   steps{
+      //   updateGitlabCommitStatus name: 'Workspace cleanup', state: 'pending'
+      //   script{
+      //     def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
+      //     ContainerHandler.destroyNSOContainer("nso6.0")
+      //   }
+      //   updateGitlabCommitStatus name: 'Workspace cleanup', state: 'success'
+      //   }
+      // }
     }
  }
