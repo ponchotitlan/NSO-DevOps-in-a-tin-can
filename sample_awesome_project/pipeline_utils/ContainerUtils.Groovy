@@ -16,11 +16,23 @@
     * - Volume ${HOME}/nso_cicd_tincan/neds mapped to /my_neds folder
     * TODO: remove AMD64 architecture from building
     */
+
+    // Spin a brand-new NSO container
     sh(
-        script: "docker run -itd --platform=linux/amd64 --name ${containerName} -p 8089:8080 ${imageName}",
+        script: "docker run -itd --platform=linux/amd64 --name ${containerName} ${imageName}",
         returnStdout: true
     )
-    //TODO: Copy the repository's nso_setup.sh file to the container and execute it
+    // Copy the nso setup script from the repository into the container
+    sh(
+        script: "cd /var/jenkins_home/workspace/nso-cicd-pipeline/ && docker cp pipeline_utils/nso_setup.sh ${containerName}:/",
+        returnStdout: true
+    )
+    // Execute the nso setup script to enable RESTCONF in port 8089 and system authentication for admin:admin
+    sh(
+        script: "docker exec -i ${containerName} bash -l -c \"sh nso_setup.sh\"",
+        returnStdout: true
+    )
+    // Start NSO
     sh(
         script: "docker exec -i ${containerName} bash -l -c \"/etc/init.d/ncs start\"",
         returnStdout: true
