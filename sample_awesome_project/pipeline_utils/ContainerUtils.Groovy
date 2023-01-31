@@ -7,7 +7,7 @@
  * To be used in the Jenkinsfile steps definition.
  */
 
- def spinNSOContainer(String imageName, String containerName){
+def spinNSOContainer(String imageName, String containerName){
     /**
     * This function creates a new Docker container in the local
     * environment based on the image name provided. The following
@@ -37,13 +37,13 @@
         script: "docker exec -i ${containerName} bash -l -c \"/etc/init.d/ncs start\"",
         returnStdout: true
     )
- }
+}
 
- def loadNEDs(String[] neds, String containerName){
+def loadNEDs(String[] neds, String containerName){
     /**
     * This function retrieves the specified NEDs from the 
-    * location ${HOME}/nso_cicd_tincan/neds, copies them into
-    * the active NSO container, and issues a packages reload
+    * location ${HOME}/nso_cicd_tincan/neds, and copies them into
+    * the active NSO container
     */
     neds.each{ ned ->
         sh(
@@ -51,9 +51,36 @@
             returnStdout: true
         )
     }
- }
+}
 
-  def destroyNSOContainer(String containerName){
+def loadServicePackages(String[] packages, String containerName){
+    /**
+    * This function retrieves the specified packages from the 
+    * checked repository, copies them into the active NSO container,
+    * compiles them, and issues a packages reload in NSO
+    */
+    packages.each{ pack -> 
+        sh(
+            script: "docker cp /var/jenkins_home/workspace/nso-cicd-pipeline/my_packages/${pack}/ ${containerName}:/nso/run/packages/",
+            returnStdout: true
+        )
+    }
+    // Compile each of the specified packages
+    packages.each{ pack ->
+        sh(
+            script: "docker exec -i ${containerName} bash -l -c \"cd /nso/run/packages/${pack}/src/ && make clean all\"",
+            returnStdout: true
+        )
+    }
+    // Issue a packages reload in NSO
+    refresh_result = sh(
+        script: "docker exec -i ${containerName} bash -l -c \"echo 'packages reload' | ncs_cli -Cu admin\"",
+        returnStdout: true
+    )
+    print(refresh_result)
+}
+
+def destroyNSOContainer(String containerName){
     /**
     * This function destroys the container named after the
     * string provided
@@ -62,6 +89,6 @@
         script: "docker rm -f ${containerName}",
         returnStdout: true
     )
- }
+}
 
- return this
+return this
