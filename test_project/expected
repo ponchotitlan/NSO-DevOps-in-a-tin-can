@@ -1,6 +1,0 @@
-  access-list-router-rfs device test-ios-0
-   access_list 3
-    action      permit
-    destination 10.2.3.2
-   !
-  !
