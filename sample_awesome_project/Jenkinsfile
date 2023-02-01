@@ -96,20 +96,51 @@ pipeline {
           }
           updateGitlabCommitStatus name: 'Test execution', state: 'success'
         }
+      }
+
+      stage('Artifacts creation') {
+      /*
+        * Jenkins will zip the compiled service package and upload it 
+        * into the SCR system
+        */
+        steps{
+          updateGitlabCommitStatus name: 'Artifacts creation', state: 'pending'
+          script{
+            String[] packages = ["router-rfs"]
+            def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
+            ContainerHandler.createArtifacts(packages,'nso6.0')
+          }
+          updateGitlabCommitStatus name: 'Artifacts creation', state: 'success'
+        }
+      }
+
+      stage('Artifacts publishing') {
+      /*
+        * Jenkins will zip the compiled service package and upload it 
+        * into the SCR system
+        */
+        steps{
+          updateGitlabCommitStatus name: 'Artifacts publishing', state: 'pending'
+          script{
+           def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
+           ContainerHandler.publishArtifacts()
+          }
+          updateGitlabCommitStatus name: 'Artifacts publishing', state: 'success'
+        }
       } 
       
-      // stage('Workspace cleanup') {
-      // /*
-      //   * Jenkins will destroy the created NSO container used throughout the process
-      //   */
-      //   steps{
-      //   updateGitlabCommitStatus name: 'Workspace cleanup', state: 'pending'
-      //   script{
-      //     def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
-      //     ContainerHandler.destroyNSOContainer("nso6.0")
-      //   }
-      //   updateGitlabCommitStatus name: 'Workspace cleanup', state: 'success'
-      //   }
-      // }
+      stage('Workspace cleanup') {
+      /*
+        * Jenkins will destroy the created NSO container used throughout the process
+        */
+        steps{
+        updateGitlabCommitStatus name: 'Workspace cleanup', state: 'pending'
+        script{
+          def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
+          ContainerHandler.destroyNSOContainer("nso6.0")
+        }
+        updateGitlabCommitStatus name: 'Workspace cleanup', state: 'success'
+        }
+      }
     }
  }

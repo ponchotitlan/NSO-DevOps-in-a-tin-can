@@ -169,6 +169,63 @@ def runTestBed(){
     ))
 }
 
+def createArtifacts(String[] packages, String containerName){
+    /**
+    * This function retrieves the compiled packages from the
+    * NSO container and pushes them in the /releases folder
+    * within the repository
+    */
+
+    // Generate timestamp for artifacts suffix
+    Date date = new Date()
+    String thisDate = date.format("dd-MM-yyyy")
+    String thisTime = date.format("HH-mm-ss")
+
+    // Create a tar file of each of the specified packages and copy them to the Jenkins workdir
+    packages.each{ pack ->
+        sh(
+            script: "docker exec -i ${containerName} bash -l -c \"cd /nso/run/packages/ && tar -czvf ${pack}_${thisDate}_${thisTime}.tar.gz ${pack}/\"",
+            returnStdout: true
+        )
+        sh(
+        script: "docker cp ${containerName}:/nso/run/packages/${pack}_${thisDate}_${thisTime}.tar.gz /var/jenkins_home/workspace/nso-cicd-pipeline/releases/",
+            returnStdout: true
+        )
+    }
+}
+
+def publishArtifacts(){
+    /**
+    * This function commits the created artifacts for each
+    * package and pushes them into the running container
+    */
+
+    // Setting git credentials
+    def encodedPassword = URLEncoder.encode("cisco123",'UTF-8')
+    sh(
+        script: "git config user.email admin@example.com",
+        returnStdout: true
+    )
+    sh(
+        script: "git config user.name root",
+        returnStdout: true
+    )
+    // Add the changes in the /releases folder and commit to the remote repository
+    sh(
+        script: "cd /var/jenkins_home/workspace/nso-cicd-pipeline/ && git add releases/*",
+        returnStdout: true
+    )
+    // Commit and push of the specified packages
+    sh(
+        script: "cd /var/jenkins_home/workspace/nso-cicd-pipeline/ && git commit -m 'Artifact publishing'",
+        returnStdout: true
+    )
+    sh(
+        script: "cd /var/jenkins_home/workspace/nso-cicd-pipeline/ && git push http://root:cisco123@192.168.1.80:8080/gitlab-instance-d69157f5/test-project.git HEAD:main",
+        returnStdout: true
+    )
+}
+
 def destroyNSOContainer(String containerName){
     /**
     * This function destroys the container named after the
