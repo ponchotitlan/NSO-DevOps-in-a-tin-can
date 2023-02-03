@@ -18,12 +18,10 @@ pipeline {
          * and spin up a container ready to be used for testing
          */
          steps{
-            updateGitlabCommitStatus name: 'NSO setup', state: 'pending'
             script{
               def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
               ContainerHandler.spinNSOContainer("cisco-nso-dev:6.0-root","nso6.0")
             }
-            updateGitlabCommitStatus name: 'NSO setup', state: 'success'
          }          
        }
 
@@ -34,13 +32,11 @@ pipeline {
          * The NEDs must me present in the ${HOME}/nso_cicd_tincan/neds location.
          */
         steps{
-          updateGitlabCommitStatus name: 'NEDs setup', state: 'pending'
           script{
             String[] NEDS = ["cisco-ios-cli-6.88"]
             def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
             ContainerHandler.loadNEDs(NEDS,"nso6.0")
           }
-          updateGitlabCommitStatus name: 'NEDs setup', state: 'success'
         }
        }
 
@@ -53,13 +49,11 @@ pipeline {
           * the root location.
           */
         steps{
-          updateGitlabCommitStatus name: 'Packages setup', state: 'pending'
           script{
             String[] packages = ["router-rfs"]
             def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
             ContainerHandler.loadServicePackages(packages,"nso6.0")
           }
-          updateGitlabCommitStatus name: 'Packages setup', state: 'success'
         }
       }      
 
@@ -71,14 +65,12 @@ pipeline {
         * NSO container
         */
         steps{
-          updateGitlabCommitStatus name: 'Testbed setup', state: 'pending'
           script{
             Map devices = ["cisco-ios-cli-6.88":"test-ios-"]
             def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
             ContainerHandler.spinTestDevices(devices,"nso6.0")
             ContainerHandler.onboardTestDevices("nso6.0")
           }
-          updateGitlabCommitStatus name: 'Testbed setup', state: 'success'
         }
       } 
 
@@ -89,12 +81,10 @@ pipeline {
         * /tests folder of this repository
         */
         steps{
-          updateGitlabCommitStatus name: 'Test execution', state: 'pending'
           script{
             def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
             ContainerHandler.runTestBed()
           }
-          updateGitlabCommitStatus name: 'Test execution', state: 'success'
         }
       }
 
@@ -104,13 +94,11 @@ pipeline {
         * into the SCR system
         */
         steps{
-          updateGitlabCommitStatus name: 'Artifacts creation', state: 'pending'
           script{
             String[] packages = ["router-rfs"]
             def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
             ContainerHandler.createArtifacts(packages,'nso6.0')
           }
-          updateGitlabCommitStatus name: 'Artifacts creation', state: 'success'
         }
       }
 
@@ -120,12 +108,10 @@ pipeline {
         * into the SCR system
         */
         steps{
-          updateGitlabCommitStatus name: 'Artifacts publishing', state: 'pending'
           script{
            def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
            ContainerHandler.publishArtifacts()
           }
-          updateGitlabCommitStatus name: 'Artifacts publishing', state: 'success'
         }
       } 
       
@@ -134,12 +120,10 @@ pipeline {
         * Jenkins will destroy the created NSO container used throughout the process
         */
         steps{
-        updateGitlabCommitStatus name: 'Workspace cleanup', state: 'pending'
         script{
           def ContainerHandler = load "pipeline_utils/ContainerUtils.Groovy"
           ContainerHandler.destroyNSOContainer("nso6.0")
         }
-        updateGitlabCommitStatus name: 'Workspace cleanup', state: 'success'
         }
       }
     }

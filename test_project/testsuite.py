@@ -106,5 +106,61 @@ destination 10.2.3.8
     self.assertEqual(EXPECTED_PAYLOAD,final_string)
     print(f'✅  {self._testMethodName} ({self._testMethodDoc})')
     
+  
+  
+  def test_interface_router_rfs(self):
+    """Test the execution of the interface_router_rfs service in NSO"""
+    # This is the information for the provisioning of our service
+    REQUEST_PAYLOAD = """
+    {
+        "router-rfs:interfaces-router-rfs": [
+          {
+            "device": "test-ios-0",
+            "interface": [
+              {
+                "slot_port": "0/5",
+                "region": "WEST",
+                "address": "192.168.0.5"
+              }
+            ]
+          }
+        ]
+    }
+    """
+    
+    # This is the output that we are expecting to get when querying the entry in our service
+    EXPECTED_PAYLOAD = """devices device test-ios-0
+config
+interface Ethernet0/5
+description WEST-ACCESS
+no switchport
+ip address 192.168.0.5 255.255.255.0
+no shutdown
+exit
+!
+!
+
+"""
+
+    # First, we perform a service provisioning in our NSO container against a netsim device
+    nso_restconf_patch_request(
+      containerAddress='192.168.1.80:8089',
+      nsoservice='router-rfs:interfaces-router-rfs',
+      payload=REQUEST_PAYLOAD)
+    
+    # Then, we query our service to validate that the provisioning was correct
+    actual_payload = nso_cli_command(
+      containerName='nso6.0',
+      command='show running-config devices device test-ios-0 config interface Ethernet 0/5')
+    
+    # We do some data massaging to match the expected payload as accurately as possible
+    final_string =''
+    for line in actual_payload.split('\n'):
+      final_string += f'{line.strip()}\n'
+
+    # Finally, we issue an assert unit test!
+    self.assertEqual(EXPECTED_PAYLOAD,final_string)
+    print(f'✅  {self._testMethodName} ({self._testMethodDoc})')
+    
 if __name__ == '__main__':
   unittest.main()

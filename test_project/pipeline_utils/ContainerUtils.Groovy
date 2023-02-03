@@ -24,7 +24,7 @@ def spinNSOContainer(String imageName, String containerName){
     )
     // Copy the nso setup script from the repository into the container
     sh(
-        script: "cd /var/jenkins_home/workspace/nso-cicd-pipeline/ && docker cp pipeline_utils/nso_setup.sh ${containerName}:/",
+        script: "cd /var/jenkins_home/workspace/nso-pipeline-demo_${BRANCH_NAME}/ && docker cp pipeline_utils/nso_setup.sh ${containerName}:/",
         returnStdout: true
     )
     // Execute the nso setup script to enable RESTCONF in port 8089 and system authentication for admin:admin
@@ -63,7 +63,7 @@ def loadServicePackages(String[] packages, String containerName){
     // Copy the specified packages into the NSO container
     packages.each{ pack -> 
         sh(
-            script: "docker cp /var/jenkins_home/workspace/nso-cicd-pipeline/my_packages/${pack}/ ${containerName}:/nso/run/packages/",
+            script: "docker cp /var/jenkins_home/workspace/nso-pipeline-demo_${BRANCH_NAME}/my_packages/${pack}/ ${containerName}:/nso/run/packages/",
             returnStdout: true
         )
     }
@@ -124,7 +124,7 @@ def onboardTestDevices(String containerName){
 
     // Copy the netsim_authentication.xml file from the repository into the NSO container
     sh(
-        script: "docker cp /var/jenkins_home/workspace/nso-cicd-pipeline/pipeline_utils/netsim_authgroup.xml ${containerName}:/",
+        script: "docker cp /var/jenkins_home/workspace/nso-pipeline-demo_${BRANCH_NAME}/pipeline_utils/netsim_authgroup.xml ${containerName}:/",
         returnStdout: true
     )
     // Load the netsim_authentication.xml file into NSO
@@ -159,12 +159,12 @@ def runTestBed(){
 
     // Installation of any required python libraries as per the requirements.txt file
     sh(
-        script: "cd /var/jenkins_home/workspace/nso-cicd-pipeline/ && pip install -r requirements.txt",
+        script: "cd /var/jenkins_home/workspace/nso-pipeline-demo_${BRANCH_NAME}/ && pip install -r requirements.txt",
         returnStdout: true
     )
     // Execution of the test suite
     print(sh(
-        script: "cd /var/jenkins_home/workspace/nso-cicd-pipeline/ && python3 testsuite.py",
+        script: "cd /var/jenkins_home/workspace/nso-pipeline-demo_${BRANCH_NAME}/ && python3 testsuite.py",
         returnStdout: true
     ))
 }
@@ -181,14 +181,20 @@ def createArtifacts(String[] packages, String containerName){
     String thisDate = date.format("dd-MM-yyyy")
     String thisTime = date.format("HH-mm-ss")
 
+    // Create a releases folder in the Jenkins workdir
+    sh(
+        script: "cd /var/jenkins_home/workspace/nso-pipeline-demo_${BRANCH_NAME}/ && mkdir releases/",
+        returnStdout: true
+    )
+
     // Create a tar file of each of the specified packages and copy them to the Jenkins workdir
     packages.each{ pack ->
         sh(
-            script: "docker exec -i ${containerName} bash -l -c \"cd /nso/run/packages/ && tar -czvf ${pack}_${thisDate}_${thisTime}.tar.gz ${pack}/\"",
+            script: "docker exec -i ${containerName} bash -l -c \"cd /nso/run/packages/ && tar -czvf ${pack}_${BRANCH_NAME}_${thisDate}_${thisTime}.tar.gz ${pack}/\"",
             returnStdout: true
         )
         sh(
-        script: "docker cp ${containerName}:/nso/run/packages/${pack}_${thisDate}_${thisTime}.tar.gz /var/jenkins_home/workspace/nso-cicd-pipeline/releases/",
+        script: "docker cp ${containerName}:/nso/run/packages/${pack}_${BRANCH_NAME}_${thisDate}_${thisTime}.tar.gz /var/jenkins_home/workspace/nso-pipeline-demo_${BRANCH_NAME}/releases/",
             returnStdout: true
         )
     }
@@ -196,32 +202,14 @@ def createArtifacts(String[] packages, String containerName){
 
 def publishArtifacts(){
     /**
-    * This function commits the created artifacts for each
-    * package and pushes them into the running container
+    * This function saves the created artifacts in a local directory
+    * The intention of this stage is to upload them in some server like
+    * Artifactory - but it doesn't have an open source version :(
     */
 
-    // Setting git credentials
-    def encodedPassword = URLEncoder.encode("cisco123",'UTF-8')
-    sh(
-        script: "git config user.email admin@example.com",
-        returnStdout: true
-    )
-    sh(
-        script: "git config user.name root",
-        returnStdout: true
-    )
-    // Add the changes in the /releases folder and commit to the remote repository
-    sh(
-        script: "cd /var/jenkins_home/workspace/nso-cicd-pipeline/ && git add releases/*",
-        returnStdout: true
-    )
     // Commit and push of the specified packages
     sh(
-        script: "cd /var/jenkins_home/workspace/nso-cicd-pipeline/ && git commit -m 'Artifact publishing'",
-        returnStdout: true
-    )
-    sh(
-        script: "cd /var/jenkins_home/workspace/nso-cicd-pipeline/ && git push http://root:cisco123@192.168.1.80:8080/gitlab-instance-d69157f5/test-project.git HEAD:main",
+        script: "cd /var/jenkins_home/workspace/nso-pipeline-demo_${BRANCH_NAME}/releases/ && cp * /my_neds/artifacts/",
         returnStdout: true
     )
 }
