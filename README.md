@@ -1,5 +1,9 @@
 # 💻🤖🥫 NSO DevOps in a tin can 🥫🤖💻
 
+<p align="center">
+  <img src="images/nso_tincan_logo.png" />
+</p>
+
 [![forthebadge](https://forthebadge.com/images/badges/made-with-groovy.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
