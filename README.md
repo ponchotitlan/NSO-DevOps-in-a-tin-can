@@ -132,7 +132,12 @@ The platform web interfaces will be available in the following locations:
 - Gitlab-CE: localhost:8080
 - Jenkins: localhost:4040
 
-Our Jenkins server requires some additional configurations, such as the installation of Docker and pip. Please refer to this wiki entry for details about this process. An automated way of fulfilling this is on the works :)
+Our Jenkins server requires some additional configurations, such as the installation of [Docker in Debian](https://docs.docker.com/engine/install/debian/) and [pip in Debian](https://linuxhint.com/install-python-pip-debian/). This will allow our Jenkins platform to make use of our host Docker engine for managing the NSO container, and installing our python libraries for running our tests.
+
+Please login to the Jenkins container and refer to the links aforementioned for easy installation via CLI. An automated way of fulfilling this is on the works :)
+```
+docker exec -it jenkins bash
+```
 
 Now, let's spin our own [NSO Docker containers](https://github.com/NSO-developer/nso-docker) for later use. The process with the official Cisco project is very straightforward:
 
@@ -144,10 +149,7 @@ git clone https://github.com/NSO-developer/nso-docker
 Download the Cisco NSO free Linux signed.bin image for testing purposes [from this link](https://software.cisco.com/download/home/286331591/type/286283941/release/6.0). The version currently available is v6.0. Once downloaded, issue the following command to extract the installer file:
 
 ```
-% sh nso-6.0.linux.x86_64.signed.bin
-.
-.
-.
+% sh nso-6.0.linux.x86_64.signed.bin . . .
 nso-6.0.linux.x86_64.installer.bin
 ```
 
@@ -174,15 +176,92 @@ For the sake of simplicity, we are using the _dev_ image. The reason? We want to
 
 The final step is to download the NEDs that we intend to use [from the same freebies link](https://software.cisco.com/download/home/286331591/type/286283941/release/6.0). We can choose between ASA, IOS, IOSXR and Nexus. In the same fashion as the NSO image, issue the command _make_ to extract the _.tar.gz_ file. Then, extract the folder within and copy it into the _/nso_cicd_tincan/neds_ folder in your ${HOME} directory:
 ```
-% sh ncs-6.0-cisco-ios-6.88-freetrial.signed.bin
-.
-.
-.
-tar -xvf ncs-6.0-cisco-ios-6.88.tar.gz
-.
-.
-.
+% sh ncs-6.0-cisco-ios-6.88-freetrial.signed.bin . . .
+tar -xvf ncs-6.0-cisco-ios-6.88.tar.gz . . .
 /cisco-ios-6.88
 ```
 
-## 🧑🏽‍🍳 Bon appetit!🧑🏽‍🍳
+## 🧂 Spicing the soup a little bit 🧂
+
+The publishing of custom images for this purpose is on the works. For the time being, let's setup our Jenkins server to talk to Gitlab-CE.
+
+Login to your Jenkins server 💂 for the first time using the generated password. Install the following plugins:
+- git
+- GitLab
+- Pipeline
+- Pipeline: Stage View
+
+<p align="center">
+  <img src="images/jenkins_01.png" />
+</p>
+
+This might take some time. While the plugins are being installed, login to your Gitlab-CE 🦊 server and navigate to _Edit Profile > Access Tokens_. Create a new token and copy the code for later use:
+
+<p align="center">
+  <img src="images/gitlab_01.png" /
+</p>
+
+<p align="center">
+  <img src="images/gitlab_02.png" />
+</p>
+
+Once the plugins in the Jenkins server 💂 are installed, navigate to _Dashboard > Configure Jenkins > Gitlab_. Provide the IP address with the port 8080 of your Gitlab-CE local server. In the _Credentials_ section, click on _+ Add_ and create new credentials of the type _GitLab Access Key_. In the _API key_ field, provide the API token generated previously in your Gitlab-CE server.
+
+<p align="center">
+  <img src="images/jenkins_02.png" />
+</p>
+
+Click the _Test Connection_ button below. A light message reading "Successful" should appear in the corner of the panel.
+
+Now that Jenkins and Gitlab-CE can talk to each other, it's time to link them further with a git project! The back and forth is getting a little bit cumbersome but trust me, it will be worth it. Login back to the Gitlab-CE 🦊 server, navigate to _Projects_ and click on _New Project_. 
+
+<p align="center">
+  <img src="images/gitlab_06.png" />
+</p>
+
+Navigate to your project and click _Clone > Clone with HTTP_. This will copy in your clipboard the URL of your project. We will need it for the next step:
+```
+Example: http://localhost/gitlab-instance-42118b3f/test-project.git
+```
+
+Time to setup our pipeline skeleton in the Jenkins server 💂 Log back in and navigate to _Dashboard > New Item > Multibranch Pipeline_. Create a new item of this type:
+
+<p align="center">
+  <img src="images/jenkins_03.png" />
+</p>
+
+Now, navigate to your freshly created pipeline and go to _Configuration > Branch Sources_. Input the information of your Gitlab-CE project. Note how the URL of the project needs to be tweaked a little bit to include the username of your Gitlab-CE server, which in this case is "root":
+
+```
+Git project repository:
+http://root@192.168.1.80:8080/gitlab-instance-42118b3f/test-project.git
+```
+
+<p align="center">
+  <img src="images/jenkins_04.png" />
+</p>
+
+Now, for the credentials field: This Git plugin only accepts Username/Password simple credentials, hence Click on the _+ Add_ button and select the _Username with Password_ type. Input the credentials of your Gitlab-CE server (root/cisco123 by default). Afterwards, click on _Apply_ and _Save_.
+
+Back into our Gitlab-CE 🦊 server, click in your fresh project. Navigate in the left panel to _Settings > Integrations_ and fetch the _Jenkins_ option.
+
+<p align="center">
+  <img src="images/gitlab_03.png" />
+</p>
+
+Provide the information from your Jenkins server, including the user and password. If you are working with the default credentials, the username is _"admin"_ and the password is available in the location _/jenkins/jenkins_setup.log_ of where you are hosting this repository:
+
+<p align="center">
+  <img src="images/gitlab_04.png" />
+</p>
+
+Click on the _Test Settings_ button. A connection validated messsge should popup, and the successful call should be displayed in the table below:
+
+<p align="center">
+  <img src="images/gitlab_05.png" />
+</p>
+
+Phew .... that was quite something, isn't it?</br></br>
+
+But buckle up! It's about to get amazing ...
+
