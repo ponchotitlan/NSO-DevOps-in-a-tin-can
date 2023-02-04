@@ -1,10 +1,16 @@
 # 💻🤖🥫 NSO DevOps in a tin can 🥫🤖💻
-A warm bowl of NSO CICD soup straight from a tin can (containerized), yet with a homemade taste. 
+
+[![forthebadge](https://forthebadge.com/images/badges/made-with-groovy.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/powered-by-coffee.svg)](https://forthebadge.com)
+
+A warm bowl of NSO CICD soup straight from a tin can (containerized), yet with a homemade taste.</br>
 Ingredients are: GitLab-CE + NSO + Jenkins + 🧡 
 
-## 🔥 But first, a horror story 🔥
+## 🔥 But first, a horror story
 
-Cisco NSO (Network Services Orchestrator) is the leading framework for our Service Provider and Enterprise network automation and orchestration. Entities of any size and reach can strongly benefit of its support for services development, as it is the power code what allows NetOps teams to unleash their true potential and craft all sorts of functionalities for automating their day-to-day operations, enhancing efficiency and reaching KPIs faster.
+Cisco NSO (Network Services Orchestrator) is the leading framework for our Service Provider and Enterprise network automation and orchestration. Entities of any size and reach can strongly benefit from its support for services development, as it is the power code what allows NetOps teams to unleash their true potential and craft all sorts of functionalities for automating their day-to-day operations, enhancing efficiency and reaching KPIs faster.
 
 Now, imagine that incredibly awesome service which was developed for enhancing the operations of our network. NetOps team is very happy about it, and of course what makes sense now is to add more features. So, the effort estimation is done with the Software Development Team, and new User Stories begin to unroll. After the expected time, the new code is ready and deployed in production.
 
@@ -18,7 +24,7 @@ In the Post Mortem analysis, it was determined that many factors alligned to cau
 
 The Software Development Team sits together to find a solution, while they share a warm bowl of soup right out of a practical, containerized tin can which will help them embrace a NetDevOps mindset across all their development lifecycle.
 
-## 🍲 Motivation behind the soup 🍲 
+## 🍲 Motivation behind the soup
 
 <p align="center">
   <img src="https://media.tenor.com/-cmMYhIgKwAAAAAC/anime-anime-gif.gif" />
@@ -36,7 +42,7 @@ The idea of bringing the goodness of DevOps into the network operations realm de
 
 The intention of this containerized mockup is to showcase a very basic CICD workflow oriented towards NSO Use Case design and deployment. The different stages contemplate the setup required for automated testing, and the release of artifacts as a single source of truth for deployment in production. The purpose is not to execute the services developped right away, but rather to have consistent, error-proof releases ready to be operated by our NetOps users at their earliest convenience.
 
-## 🥫 What's inside the tin can 🥫
+## 🥫 What's inside the tin can
 
 The following diagram shows the architecture of the ingredients (containers) within this tomato-ey repository:
 
@@ -56,7 +62,7 @@ Finally, the project structure provides all the scripts that we need for customi
 </p>
 
 
-## 🍜 Warming up the delicious soup 🍜
+## 🍜 Warming up the delicious soup
 
 First of all, let's pour the contents of the tin can into a bowl. This repository has a setup file for spinning up all the containers that we need to get started. 
 The system requirements consist on the following:
@@ -181,7 +187,7 @@ tar -xvf ncs-6.0-cisco-ios-6.88.tar.gz . . .
 /cisco-ios-6.88
 ```
 
-## 🧂 Spicing the soup a little bit 🧂
+## 🧂 Spicing the soup a little bit
 
 The publishing of custom images for this purpose is on the works. For the time being, let's setup our Jenkins server to talk to Gitlab-CE.
 
@@ -269,3 +275,48 @@ Phew .... that was quite something, isn't it?</br></br>
 
 But buckle up! It's about to get amazing ...
 
+## 👩🏽‍🍳 Bon appetit!
+
+In your Gitlab-CE 🦊  project, commit the project of this repository under the location _test_project/_. Any NSO service project that you want to test must be located under the folder _my_packages_. For demo purposes, there is a very simple service located there already, entitled _router-rfs/_.
+
+<p align="center">
+  <img src="images/gitlab_07.png" />
+</p>
+
+The moment you commit to the main or any other branch, Jenkins 💂 will be triggered right away!
+
+<p align="center">
+  <img src="images/jenkins_05.png" />
+</p>
+
+The different stages within the _Jenkinsfile_ will be shown in the main view of each branch:
+
+<p align="center">
+  <img src="images/jenkins_06.png" />
+</p>
+
+When clicking in the specific job in the lower left corner > _Console Output_, it is possible to see the progress of each stage, including the passing of the tests of our testsuite:
+
+<p align="center">
+  <img src="images/jenkins_07.png" />
+</p>
+
+If the entire workflow goes flawlessly, we will have the following view stating that our release is stable and should be good for production:
+
+<p align="center">
+  <img src="images/jenkins_08.png" />
+</p>
+
+A compiled _.tar.gz_ file will be generated in the _/nso_cicd_tincan/neds/artifacts_ directory of your ${HOME} directory. The file will contain all the tested packages already compiled and bundled together. The intention is that this file is deployed in the production NSO server with a bash script which issues the replacement and packages reload, or any other sorts of automated mechanism. This file can also be kept in an artifactory server such as jFrog Artifactory (it was not included in this project as there is no Open Source version of it).
+
+And voilá! Hopefully the soup is warm and tasty. Of course, this is a project in constant evolution, and it will be made more straightforward in subsequent versions.
+
+Have fun with this nice and savoury concoction out of a tin can!
+
+<p align="center">
+  <img src="https://media.tenor.com/4OKjXnVwz3gAAAAM/kirby-soup.gif" />
+</p>
+
+---
+
+Crafted with 🧡  by [Alfonso Sandoval - Cisco](https://linkedin.com/in/asandovalros)
