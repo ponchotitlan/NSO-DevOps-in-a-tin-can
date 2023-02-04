@@ -4,13 +4,17 @@
   <img src="images/nso_tincan_logo.png" />
 </p>
 
-[![forthebadge](https://forthebadge.com/images/badges/made-with-groovy.svg)](https://forthebadge.com)
-[![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
-[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
-[![forthebadge](https://forthebadge.com/images/badges/powered-by-coffee.svg)](https://forthebadge.com)
+<p align="center">
+  <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/made-with-groovy.svg" /></a>
+  <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/made-with-python.svg" /></a>
+  <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/built-with-love.svg" /></a>
+  <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/powered-by-coffee.svg" /></a>
+</p>
 
+<p align="center">
 A warm bowl of NSO CICD soup straight from a tin can (containerized), yet with a homemade taste.</br>
 Ingredients are: GitLab-CE + NSO + Jenkins + 🧡 
+</p>
 
 ## 🔥 But first, a horror story
 
