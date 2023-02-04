@@ -26,15 +26,15 @@ The Software Development Team sits together to find a solution, while they share
 
 The concept of *DevOps* was created to close the gap between the development and operations teams in Software projects, so that the new source code can make its way into a finalized, stable product in the most efficient and error-prone way possible.
 
-TRIVIA: How frequently does Spotify perform product releases?
+TRIVIA: How frequently does Spotify perform product releases?</br>
 a) Two months    b) Two weeks    c) Yearly
 
-Answer: b) Two weeks!
+Answer: b) Two weeks!</br>
 From code to our fingertips, the app and the services within are updated with bug fixes and new features in such short time, and most importantly, without any of us users noticing it.
 
 The idea of bringing the goodness of DevOps into the network operations realm derived in the creation of a new term: NetDevOps. It consists on an incremental approach which makes use of the DevOps techniques to automate the development of new services, enhance the quality within, and ensure a proper, flawless deployment in production. The key tool from this mindset is, notoriously, the CICD workflows, or Continuous Integration / Continuous Delivery.
 
-The purpose of this containerized mockup is to showcase a very basic CICD workflow oriented towards NSO Use Case design and deployment. The different stages contemplate the setup required for automated testing, and the release of artifacts as a single source of truth for deployment in production. The purpose is not to execute the services developped right away, but rather to have consistent, error-proof releases ready to be operated by our NetOps users at their earliest convenience.
+The intention of this containerized mockup is to showcase a very basic CICD workflow oriented towards NSO Use Case design and deployment. The different stages contemplate the setup required for automated testing, and the release of artifacts as a single source of truth for deployment in production. The purpose is not to execute the services developped right away, but rather to have consistent, error-proof releases ready to be operated by our NetOps users at their earliest convenience.
 
 ## 🥫 What's inside the tin can 🥫
 
@@ -47,7 +47,7 @@ The following diagram shows the architecture of the ingredients (containers) wit
 
 The current version of the project makes use of a Gitlab-CE container as a SCM (Source Code Manager) and a Jenkins container as the CICD platform. For the very basic purposes of NSO testing, Gitlab-CE along with Gitlab Runner is enough. However, in this version of the project it is intended to demonstrate that the communication between Jenkins and Gitlab-CE is possible, allowing for the usage of the rich plugin marketplace that is available for Jenkins.
 
-Our CICD environment makes use of the NSO as Docker project to provide a testing and deployment platform which is dynamically setup and wiped out based on your project's requirements. That means, for every run we can specify the NSO version that our project needs. Moreover, the project uses ncs-netsim virtual devices right inside this NSO container. This is a very simple approach for quick services ad-hoc testing, as we can specify in our environment which are the NEDs, amount of devices, and device names that we want to use for testing. And again, everything is wiped out once our workflow run is complete.
+Our CICD environment makes use of the [NSO as Docker](https://github.com/NSO-developer/nso-docker) project to provide a testing and deployment platform which is dynamically setup and wiped out based on your project's requirements. That means, for every run we can specify the NSO version that our project needs. Moreover, the project uses ncs-netsim virtual devices right inside this NSO container. This is a very simple approach for quick services ad-hoc testing, as we can specify in our environment which are the NEDs, amount of devices, and device names that we want to use for testing. And again, everything is wiped out once our workflow run is complete.
 
 Finally, the project structure provides all the scripts that we need for customizing our CICD environment based on our needs. As of now, the code within is hardcoded for a demo testcase, however the code is well documented to make it easy to navigate and modify.
 
@@ -112,10 +112,11 @@ These credentials are available in the log file /jenkins/gitlab_setup.log in thi
 
 This will create a series of folders and spin-up the required containers for our CICD system:
 
-- "/gitlab" folder in your ${HOME} directory
-- "/jenkins" folder in your ${HOME} directory
-- "gitlab-ce" Docker container
-- "jenkins" Docker container
+- _/nso_cicd_tincan/neds_ folder in your ${HOME} directory
+- _/gitlab_ folder in your ${HOME} directory
+- _/jenkins_ folder in your ${HOME} directory
+- _gitlab-ce_ Docker container
+- _jenkins_ Docker container
 
 ```
 
@@ -133,3 +134,55 @@ The platform web interfaces will be available in the following locations:
 
 Our Jenkins server requires some additional configurations, such as the installation of Docker and pip. Please refer to this wiki entry for details about this process. An automated way of fulfilling this is on the works :)
 
+Now, let's spin our own [NSO Docker containers](https://github.com/NSO-developer/nso-docker) for later use. The process with the official Cisco project is very straightforward:
+
+Clone the official repository in your host:
+```
+git clone https://github.com/NSO-developer/nso-docker
+```
+
+Download the Cisco NSO free Linux signed.bin image for testing purposes [from this link](https://software.cisco.com/download/home/286331591/type/286283941/release/6.0). The version currently available is v6.0. Once downloaded, issue the following command to extract the installer file:
+
+```
+% sh nso-6.0.linux.x86_64.signed.bin
+.
+.
+.
+nso-6.0.linux.x86_64.installer.bin
+```
+
+This will generate a series of files. Locate the one which ends in _.installer.bin_ and place it in the _nso-install-files/_ directory of the Docker for NSO repository.
+
+Once done, issue a _make_ command in the root location of the directory:
+```
+% make
+```
+
+This will compile two different flavors of NSO docker images into your local collection. You can verify the completion with the following command:
+```
+%docker images
+REPOSITORY                                                       TAG            IMAGE ID       CREATED         SIZE
+cisco-nso-base                                                   6.0-root       d9839387d0f7   12 days ago     678MB
+cisco-nso-dev                                                    6.0-root       7f68d9126959   12 days ago     1.43GB
+```
+
+Which is the main difference between the _base_ and the _dev_ images?</br></br>
+The _base_ one is intended for standalone testing, which means that it is entirely isolated and can only run NSO with our packages within. This means that it cannot run ncs-netsim. For that, we have the _dev_ image, which as the title implies, is intended for development purposes. The latter also allows the persistance of our work by enforcing mounting volumes for our NSO version, packages and logs.
+
+Now, which of these _flavours_ are we adding to our soup?</br></br>
+For the sake of simplicity, we are using the _dev_ image. The reason? We want to have everything that is NSO related in a single container, as ephemeral as possible, so that the setup of the netsims and their onboarding can be as flexible and code-declarative as possible. It is possible, though, to have a NSO docker image running netsims exclusively. This can be done using the _nid skeleton_ features of the NSO for Docker project. However, the setup of docker networks and such is required. The mockup of this will be left for a v2.0 of this project. As of now, do not worry about the image to use, as the setup scripts of this repository take care of everything :D
+
+The final step is to download the NEDs that we intend to use [from the same freebies link](https://software.cisco.com/download/home/286331591/type/286283941/release/6.0). We can choose between ASA, IOS, IOSXR and Nexus. In the same fashion as the NSO image, issue the command _make_ to extract the _.tar.gz_ file. Then, extract the folder within and copy it into the _/nso_cicd_tincan/neds_ folder in your ${HOME} directory:
+```
+% sh ncs-6.0-cisco-ios-6.88-freetrial.signed.bin
+.
+.
+.
+tar -xvf ncs-6.0-cisco-ios-6.88.tar.gz
+.
+.
+.
+/cisco-ios-6.88
+```
+
+## 🧑🏽‍🍳 Bon appetit!🧑🏽‍🍳
