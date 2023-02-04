@@ -21,7 +21,7 @@ The Software Development Team sits together to find a solution, while they share
 ## 🍲 Motivation behind the soup 🍲 
 
 <p align="center">
-  <img src="https://i.gifer.com/BAas.gif" />
+  <img src="https://media.tenor.com/-cmMYhIgKwAAAAAC/anime-anime-gif.gif" />
 </p>
 
 The concept of *DevOps* was created to close the gap between the development and operations teams in Software projects, so that the new source code can make its way into a finalized, stable product in the most efficient and error-prone way possible.
