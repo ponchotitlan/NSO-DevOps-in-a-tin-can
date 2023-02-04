@@ -263,5 +263,9 @@ Click on the _Test Settings_ button. A connection validated messsge should popup
 
 Phew .... that was quite something, isn't it?</br></br>
 
+<p align="center">
+  <img src="https://media.giphy.com/media/3o6MbsTCszAbi6f1aE/giphy.gif" />
+</p>
+
 But buckle up! It's about to get amazing ...
 
