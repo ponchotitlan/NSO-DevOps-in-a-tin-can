@@ -5,11 +5,13 @@
 </p>
 
 <p align="center">
+<a href="https://developer.cisco.com/codeexchange/github/repo/ponchotitlan/NSO-DevOps-in-a-tin-can"><img src="https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg" /></a>
   <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/made-with-groovy.svg" /></a>
   <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/made-with-python.svg" /></a>
   <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/built-with-love.svg" /></a>
   <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/powered-by-coffee.svg" /></a>
 </p>
+
 
 <p align="center">
 A warm bowl of NSO CICD soup straight from a tin can (containerized), yet with a homemade taste.</br>

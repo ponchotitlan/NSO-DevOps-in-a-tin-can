@@ -59,7 +59,7 @@ echo "Setting up the Jenkins container. This is our orchestrator (Setup will tak
 mkdir -p ${HOME}/jenkins
 export JENKINS_HOME=/${HOME}/jenkins
 export INVENTORY=${HOME}/nso_cicd_tincan/neds
-cd jenkins
+cd ${HOME}/NSO-DevOps-in-a-tin-can/jenkins
 docker-compose up -d 2> jenkins_setup.log
 
 echo "Likewise, let's wait for Jenkins web portal to be available ... 💂\\n"
