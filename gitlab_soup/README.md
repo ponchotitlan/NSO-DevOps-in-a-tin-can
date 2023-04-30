@@ -67,7 +67,7 @@ For this, navigate to the menu on the left > Settings > CI/CD. Expand the *Runne
   <img src="../images/gitlabrunner_01.png" />
 </p>
 
-Afterwards, navigate via CLI to the root of this repository and input the following command:
+Afterwards, open a terminal and navigate to the root of this repository and input the following command:
 
 ```
 % cd gitlab_soup && docker-compose exec gitlab-runner gitlab-runner register
@@ -109,6 +109,58 @@ And voilà! The setup is done. You should see your runner registered in your pro
 
 <p align="center">
   <img src="../images/gitlabrunner_02.png" />
+</p>
+
+The last thing to do here is to setup the SSH credentials that we will use to push our code back and forth from the new GitLab repository.
+
+As you may have noticed, this yellow ribbon appeared when you first created the new project:
+
+<p align="center">
+  <img src="../images/gitlabrunner_03.png" />
+</p>
+
+Open a terminal and issue the following command for generating a brand new RSA key (the security algorithm is irrelevant for the purposes of this demo):
+
+```
+% ssh-keygen -t rsa -b 2048 -C "gitlab demo"
+Generating public/private rsa key pair.
+Enter file in which to save the key (/Users/.ssh/id_rsa): 
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /Users/.ssh/id_rsa
+Your public key has been saved in /Users/.ssh/id_rsa.pub
+The key fingerprint is:
+SHA256:Jy2hoi8trGWKiwHfc1dDgqP4dWgIb7mlh+FsNMXRlUY gitlab demo
+The key's randomart image is:
++---[RSA 2048]----+
+|      .. oE.     |
+|     . o. o      |
+|  .   = o..      |
+|   + = + =       |
+|. . @ * S =      |
+|.. O @ . = .     |
+|..=.@ o .        |
+|o=+o.+ .         |
+|*o o.            |
++----[SHA256]-----+
+```
+
+Now it's time to add it to our GitLab account. Issue the following command in your terminal to copy the contents of your key file into your clipboard:
+
+macOS - 
+```
+tr -d '\n' < ~/.ssh/id_rsa.pub | pbcopy
+```
+
+Linux - 
+```
+xclip -sel clip < ~/.ssh/id_rsa.pub
+```
+
+Back on the GitLab interface, click the Blue button for adding an SSH Key and copy the clipboard contents into the box. Once submitted, the interface should look like this:
+
+<p align="center">
+  <img src="../images/gitlabrunner_04.png" />
 </p>
 
 Now let's move ahead with the NSO tooling.

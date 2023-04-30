@@ -53,6 +53,3 @@ Success! You can login now to Gitlab-CE with the following information\\n
 👤 User: root\\n
 🔑 Password: cisco123
 """ >> gitlab_setup.log
-
-#Register the gitlab-runner with the gitlab container
-#docker-compose exec gitlab-runner gitlab-runner register 2> gitlab_runner_setup.log

@@ -12,6 +12,7 @@ services:
     image: 'yrzr/gitlab-ce-arm64v8'
     restart: always
     container_name: gitlab-ce
+    hostname: 'localhost'
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         external_url 'http://localhost'
@@ -31,6 +32,7 @@ services:
     restart: unless-stopped
     environment:
       - CI_SERVER_URL=http://gitlab
-      - RUNNER_EXECUTOR=docker
+      - CLONE_URL=http://gitlab
+      - RUNNER_EXECUTOR=shell
       - RUNNER_NAME=nsocicdrunner
-      - DOCKER-IMAGE=docker:stable
+      - RUN-UNTAGGED=true
