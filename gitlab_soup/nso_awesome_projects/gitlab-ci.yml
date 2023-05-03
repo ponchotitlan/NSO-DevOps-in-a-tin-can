@@ -1,0 +1,62 @@
+# NSO-DevOps-in-a-tin-can
+# Author: @ponchotitlan
+# 
+# Pipeline definition for gitlab-runner
+#
+# The pipeline defined in this file aims to provide an example of the workflow for testing and deploying a NSO service package through different configuration means
+
+##############################################
+# Set here the names of the testbed elements #
+##############################################
+variables:
+  NSO_TARGET_VERSION: "6.0"
+  NSO_IMAGE_NAME: "ned/testnso:6.0-root-alfsando"
+  NETSIM_DEVICE_PREFIX: "device-"
+  NETSIM_IMAGE_NAME: "ned/netsim-cisco-iosxr-cli-7.43:6.0-root-alfsando"
+
+stages:
+  - build
+  - test
+  - deliver
+  - deploy
+
+nso-staging-🏗️:
+  stage: build
+  script:
+    - echo "(Build 🏗️) Spinning up a NSO container for version v.$NSO_TARGET_VERSION (Docker image $NSO_IMAGE_NAME)"
+    - echo "(Build 🏗️) Loading and compiling packages in the NSO container"
+    - echo "(Build 🏗️) Executing packages reload in the NSO container"       
+
+testbed-staging-🏗️:
+  stage: build
+  script:
+    - echo "(Build 🏗️) Loading authgroups for netsims in the NSO container"
+    - echo "(Build 🏗️) Spinning up a NETSIM container (Docker image $NETSIM_IMAGE_NAME)"
+    - echo "(Build 🏗️) Generating NETSIM configurations xml"
+    - echo "(Build 🏗️) Loading NETSIM configurations xml in the NSO container"
+    - echo "(Build 🏗️) Onboarding test devices in the NSO container"
+
+test-1-🤖:
+  stage: test
+  script:
+    - echo "(Test 🤖) Executing test 1"
+
+test-2-🤖:
+  stage: test
+  script:
+    - echo "(Test 🤖) Executing test 2"
+
+test-3-🤖:
+  stage: test
+  script:
+    - echo "(Test 🤖) Executing test 3"
+
+release-publishing-📦:
+  stage: deliver
+  script:
+    - echo "(Deliver 📦) Executing releasing"
+
+deploy-production-📬:
+  stage: deploy
+  script:
+    - echo "(Deploy 📬) Deployment in production"
