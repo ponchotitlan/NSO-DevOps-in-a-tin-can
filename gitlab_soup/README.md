@@ -163,7 +163,39 @@ Back on the GitLab interface, click the Blue button for adding an SSH Key and co
   <img src="../images/gitlabrunner_04.png" />
 </p>
 
-Now let's move ahead with the NSO tooling.
+## 🧅 Chopping some onions and NSO in Docker (nid) images
+
+Now, let's spin our own [NSO Docker containers](https://github.com/NSO-developer/nso-docker) for later use. The process with the official Cisco project is very straightforward:
+
+Clone the official repository in your host:
+```
+git clone https://github.com/NSO-developer/nso-docker
+```
+
+Download the Cisco NSO free Linux signed.bin image for testing purposes [from this link](https://software.cisco.com/download/home/286331591/type/286283941/release/6.0). The version currently available is v6.0. Once downloaded, issue the following command to extract the installer file:
+
+```
+% sh nso-6.0.linux.x86_64.signed.bin . . .
+nso-6.0.linux.x86_64.installer.bin
+```
+
+This will generate a series of files. Locate the one which ends in _.installer.bin_ and place it in the _nso-install-files/_ directory of the Docker for NSO repository.
+
+Once done, issue a _make_ command in the root location of the directory:
+```
+% make
+```
+
+This will compile two different flavors of NSO docker images into your local collection. You can verify the completion with the following command:
+```
+%docker images
+REPOSITORY                                                       TAG            IMAGE ID       CREATED         SIZE
+cisco-nso-base                                                   6.0-root       d9839387d0f7   12 days ago     678MB
+cisco-nso-dev                                                    6.0-root       7f68d9126959   12 days ago     1.43GB
+```
+
+Which is the main difference between the _base_ and the _dev_ images?</br></br>
+The _base_ one is intended for standalone testing, which means that it is entirely isolated and can only run NSO with our packages within. This means that it cannot run ncs-netsim. For that, we have the _dev_ image, which as the title implies, is intended for development purposes. The latter also allows the persistance of our work by enforcing mounting volumes for our NSO version, packages and logs.
 ---
 
 Crafted with 🧡  by [Alfonso Sandoval - Cisco](https://linkedin.com/in/asandovalros)
