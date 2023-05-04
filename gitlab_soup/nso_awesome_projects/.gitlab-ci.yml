@@ -5,25 +5,29 @@
 #
 # The pipeline defined in this file aims to provide an example of the workflow for testing and deploying a NSO service package through different configuration means
 
-##############################################
-# Set here the names of the testbed elements #
-##############################################
+include:
+  - '/pipeline_utils/environments.yml'
+
 variables:
-  NSO_TARGET_VERSION: "6.0"
-  NSO_IMAGE_NAME: "ned/testnso:6.0-root-alfsando"
-  NETSIM_DEVICE_PREFIX: "device-"
-  NETSIM_IMAGE_NAME: "ned/netsim-cisco-iosxr-cli-7.43:6.0-root-alfsando"
+  STAGING_NSO_CONTAINER: '$GITLAB_USER_LOGIN-NSO-$STAGING_NSO_VERSION'
+  STAGING_NSO_DEVICE: '$STAGING_NETSIM_PREFIX-1'
 
 stages:
   - build
   - test
   - deliver
   - deploy
+  - cleanup
 
 nso-staging-🏗️:
   stage: build
   script:
-    - echo "(Build 🏗️) Spinning up a NSO container for version v.$NSO_TARGET_VERSION (Docker image $NSO_IMAGE_NAME)"
+    - echo "(Build 🏗️) Creating docker network"
+    - docker network create nsotestenvnetwork
+
+    - echo "(Build 🏗️) Spinning up a NSO container for version v.$STAGING_NSO_VERSION (Docker image $STAGING_NSO_DOCKER_IMAGE)"
+    - docker run -itd --network nsotestenvnetwork --env-file pipeline_utils/nso_setup.list --platform=linux/amd64 -p 8080:80 --name $STAGING_NSO_CONTAINER $STAGING_NSO_DOCKER_IMAGE
+
     - echo "(Build 🏗️) Loading and compiling packages in the NSO container"
     - echo "(Build 🏗️) Executing packages reload in the NSO container"       
 
@@ -31,7 +35,7 @@ testbed-staging-🏗️:
   stage: build
   script:
     - echo "(Build 🏗️) Loading authgroups for netsims in the NSO container"
-    - echo "(Build 🏗️) Spinning up a NETSIM container (Docker image $NETSIM_IMAGE_NAME)"
+    - echo "(Build 🏗️) Spinning up a NETSIM container (Docker image $STAGING_NETSIM_DOCKER_IMAGE)"
     - echo "(Build 🏗️) Generating NETSIM configurations xml"
     - echo "(Build 🏗️) Loading NETSIM configurations xml in the NSO container"
     - echo "(Build 🏗️) Onboarding test devices in the NSO container"
@@ -60,3 +64,11 @@ deploy-production-📬:
   stage: deploy
   script:
     - echo "(Deploy 📬) Deployment in production"
+
+cleanup-🗑️:
+  stage: cleanup
+  script:
+    - echo "(Cleanup 🗑️) Deleting NSO container"
+    - echo "(Cleanup 🗑️) Deleting NETSIM containers"
+    - echo "(Cleanup 🗑️) Deleting docker network"
+    - docker network rm nsotestenvnetwork

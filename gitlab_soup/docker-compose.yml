@@ -33,6 +33,6 @@ services:
     environment:
       - CI_SERVER_URL=http://gitlab
       - CLONE_URL=http://gitlab
-      - RUNNER_EXECUTOR=shell
+      - RUNNER_EXECUTOR=docker
       - RUNNER_NAME=nsocicdrunner
       - RUN-UNTAGGED=true
