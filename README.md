@@ -8,11 +8,6 @@
   <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/powered-by-coffee.svg" /></a>
 </p>
 
-
-<p align="center">
-🔥 UNDER CONSTRUCTION! 🔥
-</p>
-
 ## 🔥 But first, a horror story
 
 Cisco NSO (Network Services Orchestrator) is the leading framework for our Service Provider and Enterprise network automation and orchestration. Entities of any size and reach can strongly benefit from its support for services development, as it is the power code what allows NetOps teams to unleash their true potential and craft all sorts of functionalities for automating their day-to-day operations, enhancing efficiency and reaching KPIs faster.
@@ -46,6 +41,22 @@ From code to our fingertips, the app and the services within are updated with bu
 The idea of bringing the goodness of DevOps into the network operations realm derived in the creation of a new term: NetDevOps. It consists on an incremental approach which makes use of the DevOps techniques to automate the development of new services, enhance the quality within, and ensure a proper, flawless deployment in production. The key tool from this mindset is, notoriously, the CICD workflows, or Continuous Integration / Continuous Delivery.
 
 The intention of this containerized mockup is to showcase a very basic CICD workflow oriented towards NSO Use Case design and deployment. The different stages contemplate the setup required for automated testing, and the release of artifacts as a single source of truth for deployment in production. The purpose is not to execute the services developped right away, but rather to have consistent, error-proof releases ready to be operated by our NetOps users at their earliest convenience.
+
+## 🥫 What's inside the tin can
+
+There is no such things as "One size fits all" in the DevOps world. Hence, this repository aims to provide a couple of examples using different Open Source tools, while achieving the same results. 
+
+The soup comes in two flavours:
+
+### 🥫 GitLab & Jenkins
+Being one of the pioneers, Jenkins is a leading Open Source CICD platform. It is likely that you will find it, specially in massive DevOps workflows or legacy layouts. Hence, it is important to know how does it operate and how can it be leveraged for our NSO development purposes. In this soup flavour, it is integrated with GitLab - both as containerized solutions.
+
+Navigate to the location ```gitlab_&_jenkins_soup/``` to get started!
+
+### 🥫 GitLab (standalone)
+Gitlab has been gaining popularity recently as the single-pane-of-glass solution for all our development lifecycle. The introduction of Gitlab Runners brought the capability of creating YAML-based pipelines which can be operated and monitored from within the same portal as the Source Code Repository management. Moreover, given that SCM and DevOps are part of the same solution, the setup process is much more simple and the DevOps stages can be easily integrated with the rest of the tols from the "orange tanooki".
+
+Navigate to the location ```gitlab_soup/``` to get started!
 
 ---
 
