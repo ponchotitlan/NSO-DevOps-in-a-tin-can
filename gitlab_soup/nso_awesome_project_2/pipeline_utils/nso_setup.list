@@ -1,0 +1,11 @@
+# Enable config of parameters in ncs.conf file
+MANGLE_CONFIG=true
+
+# Enable Cisco CLI style
+CLI_STYLE=c
+
+# Enable HTTP interface
+HTTP_ENABLE=true
+
+# Password for admin user
+ADMIN_PASSWORD=admin

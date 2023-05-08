@@ -1,0 +1,7 @@
+## A very simple rfs package for demo purposes
+
+The purpose of this simple service package is to demonstrate CRUD operations over IOSXR ACL policies as part of a NetDevOps demonstration.
+
+The original project can be found [in this git repository](https://github.com/ponchotitlan/NSO-DevOps-in-a-tin-can).
+
+Crafted with 🧡 by Alfonso Sandoval - Cisco

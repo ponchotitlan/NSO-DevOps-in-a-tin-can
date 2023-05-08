@@ -1,0 +1,25 @@
+<devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+        <name>{$DEVICE}</name>
+        <config>
+        <line xmlns="http://tail-f.com/ned/cisco-ios-xr">
+            <template>
+            <name>{$NAME}</name>
+            <access-class>
+                <ingress>{$ADDRESS_GROUP}</ingress>
+            </access-class>
+            <transport>
+                <input>{$INPUT_TRANSPORT}</input>
+                <output>{$OUTPUT_TRANSPORT}</output>
+            </transport>
+            <exec-timeout>
+                <minutes>{$EXEC_TIMEOUT}</minutes>
+            </exec-timeout>
+            <session-timeout>
+                <minutes>{$SESSION_TIMEOUT}</minutes>
+            </session-timeout>
+            </template>
+        </line>
+        </config>
+    </device>
+</devices>

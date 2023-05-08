@@ -1,0 +1,29 @@
+{
+  "router-rfs:access-list-router-rfs": [
+    {
+      "device": "netsim-iosxr-dev--1",
+      "access_list": [
+        {
+          "name": "test_acl_01",
+          "rule": [
+            {
+              "id": "30",
+              "action": "permit",
+              "destination": "172.138.4.50"
+            }
+          ]
+        },
+        {
+          "name": "test_acl_02",
+          "rule": [
+            {
+              "id": "40",
+              "action": "deny",
+              "destination": "185.175.45.50"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

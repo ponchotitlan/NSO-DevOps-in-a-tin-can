@@ -1,0 +1,18 @@
+<devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+        <name>{$DEVICE}</name>
+        <config>
+            <ipv4 xmlns="http://tail-f.com/ned/cisco-ios-xr">
+                <access-list>
+                    <named-acl>
+                    <name>{$NAME}</name>
+                        <rule>
+                            <id>{$RULE_ID}</id>
+                            <line>{$ACTION} {$DESTINATION}</line>
+                        </rule>
+                    </named-acl>
+                </access-list>
+            </ipv4>
+        </config>
+    </device>
+</devices>

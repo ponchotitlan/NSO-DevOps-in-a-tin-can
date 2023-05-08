@@ -1,0 +1,138 @@
+module router-rfs {
+
+  namespace "http://example.com/router-rfs";
+  prefix router-rfs;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import tailf-ncs {
+    prefix ncs;
+  }
+
+  description
+    "Small rfs package for demonstration purposes";
+
+  revision 2023-03-05 {
+    description
+      "Awesome NetDevOps demo";
+  }
+
+  list access-list-router-rfs {
+    description "Refactoring of rfs service for access lists provisioning on IOSXR devices";
+    uses ncs:service-data;
+    ncs:servicepoint access-list-router-rfs-servicepoint;
+
+    key "device";
+
+    leaf device {
+      tailf:info "Cisco IOSXR device";
+      tailf:cli-expose-key-name;
+      type leafref {
+        path "/ncs:devices/ncs:device/ncs:name";
+      }
+      mandatory true;
+    }
+
+    list access_list {
+      tailf:info "New Access-list";
+      key "name";
+
+      leaf name {
+        tailf:info "Access-list name";
+        type string;
+      }
+
+      list rule {
+        tailf:info "New rule within the Access-list";
+        key "id";
+
+        leaf id {
+          tailf:info "rule id";
+          type uint32;
+        }
+
+        leaf action {
+          tailf:info "Access type enumeration";
+          type enumeration {
+            enum "permit";
+            enum "deny";
+          }
+          mandatory true;
+        }
+
+        leaf destination {
+          tailf:info "Destination IP address";
+          type inet:ipv4-address;
+          mandatory true;
+        }        
+      }
+    }
+  }
+
+  list line-template-vty-router-rfs {
+    description "RFS utilities for Cisco IOSXR line template provisioning";
+    uses ncs:service-data;
+    ncs:servicepoint line-template-vty-router-rfs-servicepoint;
+
+    key "device";
+
+    leaf device {
+      tailf:info "Cisco IOSXR device";
+      tailf:cli-expose-key-name;
+      type leafref {
+        path "/ncs:devices/ncs:device/ncs:name";
+      }
+      mandatory true;
+    }
+
+    list line-template {
+      tailf:info "New line template";
+      key "name";
+
+      leaf name {
+        tailf:info "line template name";
+        type string;
+      }
+
+      leaf ip-group {
+        tailf:info "IP grouping name";
+        type string;
+        mandatory true;
+      }
+
+      leaf session-timeout {
+        tailf:info "Session timeout in seconds";
+        type uint32;
+        mandatory true;
+      }
+
+      leaf exec-timeout {
+        tailf:info "Execution timeout in seconds";
+        type uint32;
+        mandatory true;
+      }
+
+      leaf transport-input {
+        tailf:info "Input Transport enumeration";
+        type enumeration {
+          enum "ssh";
+          enum "telnet";
+        }
+        mandatory true;
+      }
+
+      leaf transport-output {
+        tailf:info "Output Transport enumeration";
+        type enumeration {
+          enum "ssh";
+          enum "telnet";
+        }
+        mandatory true;
+      }
+    }
+  }
+}
