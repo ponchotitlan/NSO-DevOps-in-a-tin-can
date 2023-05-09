@@ -1,6 +1,10 @@
 # 💻🤖🥫 NSO DevOps in a tin can 🥫🤖💻
 
 <p align="center">
+  <img src="images/tincan_shelf.png" />
+</p>
+
+<p align="center">
 <a href="https://developer.cisco.com/codeexchange/github/repo/ponchotitlan/NSO-DevOps-in-a-tin-can"><img src="https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg" /></a>
   <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/made-with-groovy.svg" /></a>
   <a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/made-with-python.svg" /></a>

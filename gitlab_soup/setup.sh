@@ -19,6 +19,9 @@
 
 echo "\\nWarming up the contents of this tin can! 🥫🥫🥫\\n"
 
+echo "\\nFirst, let's install some required python dependencies ..."
+pip3 install -r requirements.txt
+
 echo "Setting up the Gitlab-CE container. This is our Control Versioning System (Setup will take some time) ... 🦊\\n"
 mkdir -p ${HOME}/gitlab
 export GITLAB_HOME=/${HOME}/gitlab

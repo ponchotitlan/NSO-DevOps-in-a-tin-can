@@ -67,7 +67,7 @@ testbed-staging-🏗️:
     - echo "(Build 🏗️) Onboarding test devices in the NSO container"
     - docker exec -i $STAGING_NSO_CONTAINER bash -l -c "ncs_load -l -m devices.xml"
     - docker exec -i $STAGING_NSO_CONTAINER bash -l -c "echo 'devices device * sync-from' | ncs_cli -Cu admin"
-    - docker exec -i $STAGING_NSO_CONTAINER bash -l -c "echo 'devices list' | ncs_cli -Cu admin"
+    - docker exec -i $STAGING_NSO_CONTAINER bash -l -c "echo 'show devices list' | ncs_cli -Cu admin"
 
 (router-rfs)-access-list-router-rfs-🤖:
   stage: test
@@ -109,14 +109,6 @@ release-publishing-📦:
     when: always
     paths:
      - $CI_PROJECT_DIR/nso-packages_$CI_COMMIT_REF_NAME.tar.gz
-
-release-git-📦:
-  stage: deliver
-  when: on_success
-  only:
-    - main
-  script:
-    - echo "(Deliver 📦) Creating git release TBD"
 
 
 deploy-production-📬:

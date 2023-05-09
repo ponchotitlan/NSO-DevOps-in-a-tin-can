@@ -1,5 +1,9 @@
 # 💻🤖🥫 NSO DevOps in a tin can 🥫🤖💻
 
+<p align="center">
+  <img src="../images/tincan_orange.png" />
+</p>
+
 ## Now with more Orange Fox whiskers! 🦊
 
 Gitlab has been recently gaining popularity as the de-facto platform for project development. Its in-built tools allow the handling of the development lifecycle from top to bottom under a single pane of glass. The introduction og Gitlab Runners for DevOps capabilities enhance further the development experience, as it is possible to create, manage and monitor our DevOps pipeline from within the same portal, while also allowing for further integration with the other tools and with just some clicks and lines of code.
@@ -126,7 +130,7 @@ Now, we need to register a Gitlab Runner instance for unlocking the CI/CD capabi
 
 There are different ways to do this. Ideally, we can pull and deploy a linux-based OS for using as our staging environment and let Gitlab Runner use it for running our pipeline. The problem is that we would need to have our recently created NSO images onboarded somewhere else, such as an enterprise docker server or our Gitlab Repository Inventory. The latter will be explored in a further update of this project, however for the sake of this demo we will use our host OS.
 
-For that purpose, download and install Gitlab Runner following the instructions from the official site.
+For that purpose, download and install Gitlab Runner following the instructions [from the official site](https://docs.gitlab.com/runner/install/).
 
 Once installed, login to the web portal of your Gitlab container and navigate to the menu on the left > Settings > CI/CD. Expand the *Runners* option and take note of the _Registration token_ field:
 
@@ -243,14 +247,7 @@ The project comes pre-populated with the sample repository ```nso_awesome_projec
 - ```pipeline_utils/nso_setup.list```: Configurations for the NSO server which are applied when spinning a new container using the NSO in Docker idiomatic capabilities (enable HTTP, admin user, etc)
 - ```tests```: A series of Robot Framework tests for the two servicepoints within the ```router-rfs ``` package. The structure consists on input payloads described in ```.json``` files which is sent to NSO through REST using the rfs service. Afterwards, the resulting pushed config is verified and matched against the payload in the ```.txt``` files.
 
-Navigate to the root of this folder and issue the following commands:
-
-```
-cd nso_awesome_project/
-git init
-git add .
-TBD ....
-```
+Issue a ```git clone``` of your Gitlab project, add the files within the ```nso_awesome_project``` folder, commit and push.
 
 Once pushed, the pipeline will be triggered automatically! If everything goes as planned, you will get a result which looks like the following once all the stages are done:
 

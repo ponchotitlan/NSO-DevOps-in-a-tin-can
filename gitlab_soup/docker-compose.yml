@@ -2,14 +2,10 @@
 # Author: @ponchotitlan
 # 
 # Docker-compose file for deploying gitlab-ce
-#
-# IMPORTANT!
-# This version of the docker-compose file uses the gitlab-ce build for ARM64 because this is my current development environment (Mac M1). Will update with the x64_86 docker image soon before the first project release
-
 version: '3.6'
 services:
   gitlab:
-    image: 'yrzr/gitlab-ce-arm64v8'
+    image: 'gitlab/gitlab-ee:latest'
     restart: always
     container_name: gitlab-ce
     hostname: 'localhost'
@@ -24,15 +20,3 @@ services:
       - '$GITLAB_HOME/config:/etc/gitlab'
       - '$GITLAB_HOME/logs:/var/log/gitlab'
       - '$GITLAB_HOME/data:/var/opt/gitlab'
-  gitlab-runner:
-    image: 'gitlab/gitlab-runner:latest'
-    container_name: gitlab-runner
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
-    environment:
-      - CI_SERVER_URL=http://gitlab
-      - CLONE_URL=http://gitlab
-      - RUNNER_EXECUTOR=docker
-      - RUNNER_NAME=nsocicdrunner
-      - RUN-UNTAGGED=true
