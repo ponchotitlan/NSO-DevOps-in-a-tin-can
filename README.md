@@ -60,7 +60,7 @@ Navigate to the location ```gitlab_&_jenkins_soup/``` to get started!
 ### 🥫 GitLab (standalone)
 Gitlab has been gaining popularity recently as the single-pane-of-glass solution for all our development lifecycle. The introduction of Gitlab Runners brought the capability of creating YAML-based pipelines which can be operated and monitored from within the same portal as the Source Code Repository management. Moreover, given that SCM and DevOps are part of the same solution, the setup process is much more simple and the DevOps stages can be easily integrated with the rest of the tols from the "orange tanooki".
 
-Navigate to the location ```gitlab_soup/``` to get started!
+#### This project is entirely hosted on a gitlab.com repository! [🦊 Click here to access it! 🦊](https://gitlab.com/ponchotitlan/nso-cicd-soup)
 
 ---
 
